@@ -1,19 +1,28 @@
 import React, {useContext} from 'react'
-import {View, Text, StyleSheet, FlatList, Button} from 'react-native'
-import BlogContext from '../context/BlogContext'
+import {View, Text, StyleSheet, FlatList, Button, TouchableOpacity} from 'react-native'
+import { Context } from '../context/BlogContext'
+import {Entypo} from '@expo/vector-icons'
+import { NavigationEvents } from 'react-navigation'
 
-const IndexScreen = () => {
-    const {data, addBlogPost} = useContext(BlogContext)
+const IndexScreen = ({ navigation }) => {
+    const {state, addBlogPost, deleteBlogPost} = useContext(Context)
 
     return (
         <View>
             <Button title="Add Post" onPress={() => addBlogPost()} />
             <FlatList 
-                data={data}
-                keyExtractor={_blogPost => blogPosts.title}
+                data={state}
+                keyExtractor={ (blogPost) => blogPost.title}
                 renderItem={({item}) => {
                     return (
-                        <Text>{item.title}</Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('Show', {id: item.id})}>
+                            <View style={styles.flatListContainer}>
+                                <Text style={styles.text}>{item.title} - {item.id}</Text>
+                                <TouchableOpacity onPress={() => deleteBlogPost(item.id)}>
+                                <Entypo name="trash" style={styles.icon}/>
+                                </TouchableOpacity>
+                            </View>
+                        </TouchableOpacity>
                     )
                 }}
             />
@@ -22,8 +31,22 @@ const IndexScreen = () => {
 }
 
 const styles = StyleSheet.create({
-    style1: {
+    flatListContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: 20,
+        paddingHorizontal: 10,
+        borderTopWidth: 1,
 
+        borderColor: 'grey',
+    },
+    text: {
+        fontSize: 18,
+
+    },
+    icon: {
+        fontSize: 24,
+        marginRight: 5,
     },
 
 })
